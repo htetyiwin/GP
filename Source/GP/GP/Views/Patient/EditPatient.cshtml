@@ -1,0 +1,254 @@
+﻿@model GP.Models.Patient
+@using GP.Models;
+
+@{
+    ViewData["Title"] = "EditPatient";
+    Layout = "~/Views/Shared/_MemberLayout.cshtml";
+}
+<link href="~/jquery-ui.css" rel="stylesheet" />
+<link href="~/jquery-ui.min.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-ui.min.js"></script>
+<script>
+    $('document').ready(function() {
+        //$('#btnSave').click(function () {
+        //    var fileId = $('#FileID').val();
+        //    var files = $("#ImageFile").prop("files");
+        //    var formData = new FormData();
+        //    for (var i = 0; i < files.length; i++) {
+        //        formData.append("files", files[i]);
+        //    }
+     
+        //    $.ajax({
+        //        url: "/Patient/FileUpload?FileId="+fileId,
+        //        type: "POST",
+        //        data: formData,
+        //        processData: false,
+        //        contentType: false,
+        //        success: function (result) {
+        //            if (result.status == 0) {
+        //                EditPatientSave();
+        //            } else if (result.status == 1) {
+        //                alert("File name already exist!");
+        //            } 
+        //        }
+        //        });
+        //});
+
+        $('#btnSave').click(function () {
+            EditPatientSave();
+        });
+    });
+
+    function EditPatientSave() {
+        var patientId = $('#PatientID').val();
+        var genderId = $('#GenderID').val();
+        var patientCode = $('#PatientCode').val();
+        var patientName = $('#PatientName').val();
+        var dob = $('#DOB').val();
+        var address = $('#Address').val();
+
+        var temp = {
+            Patient_Code: patientCode,
+            Patient_Name: patientName,
+            DOB: dob,
+            Address: address,
+            GenderID: genderId,
+            Patient_ID: patientId
+        };
+
+        $.ajax({
+            url: '/Patient/editPatientSave',
+            type: "POST",
+            dataType: "JSON",
+            data: { receive: JSON.stringify(temp) },
+            success: function (result) {
+                if (result.status == 0) {
+                    alert("success");
+                    window.location.href('Patient/PatientList');
+                }
+            }
+        })
+    }
+    function changeImage(){
+        var files = $("#ImageFile")[0].files[0];
+        fr = new FileReader();
+        fr.readAsDataURL(files);
+        fr.onload = function (e) {
+            console.log(e.target.result);
+            $("#patientImage").attr("src", e.target.result);
+        }
+    }
+
+    function DownloadFile(fileCode, fileName, fileType) {
+
+        if (fileCode.trim().length == 0 || fileName.trim().length == 0 || fileType.trim().length == 0) {
+
+            alert("Sorry ! Retry!!!");
+            return;
+        }
+        var a = document.createElement('a');
+        a.href = '/Patient/DownloadFile?fileCode=' + fileCode + '&fileName=' + fileName + '&fileType=' + fileType;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        e.preventDefault();
+    }
+
+</script>
+@{
+    <div class="container-fluid">
+        <div id="content-body" style="padding:0;margin-top:5px;">
+            @Html.HiddenFor(model => model.PatientID)
+            @*@Html.HiddenFor(model => model.FileID)*@
+            <form enctype="multipart/form-data" method="post">
+                <div class="row form-inline">
+                    <div class="col-sm-6" style="font-size:21px;">
+                        <i><b>New Patient Create</b></i>
+                    </div>
+                    <div class="col-sm-6">
+                        <div class="col-sm-11" style="text-align:right;">
+                            <a class="btn btn-primary" id="btnDiscard"><i class="fa fa-remove"></i> Discard</a>
+                            &nbsp;
+                            <a class="btn btn-primary" id="btnSave"><i class="fa fa-save"></i> Save</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-horizontal" style="padding:0;margin-top:25px;">
+                    <div class="col-lg-6" style="padding:0;">
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3" for="patientCode">Patient Code</label>
+                                <div class="col-sm-9">
+                                    @Html.TextBoxFor(model => model.PatientCode, new { @class = "form-control", required = "required", placeHolder = "Enter Patient Code", @disabled = "true" })
+
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3" for="patientName">Patient Name</label>
+                                <div class="col-sm-9">
+                                    @Html.TextBoxFor(model => model.PatientName, new { @class = "form-control", required = "required", placeHolder = "Enter Patient Name" })
+
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="col-lg-12">
+                            @*<div class="form-group">
+                    <div class='input-group date datepicker'>
+                        @Html.TextBoxFor(model => model.DOB, "{0:dd/MM/yyyy}", new { @class = "form-control", @placeholder = "Enter : dd/MM/YYYY" })
+                        <span class="input-group-addon">
+                            <i class="fa fa-calendar"></i>
+                        </span>
+                    </div>
+                </div>*@
+
+                            <div class="form-group">
+                                <label class="control-label col-sm-3" for="DOB">Date Of Birth</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group date datepicker">
+                                        @*<input type="text" class="form-control datepicker" id="DOB" style="cursor:pointer;">*@
+                                        @Html.TextBoxFor(model => model.DOB, "{0:dd/MM/yyyy}", new { @class = "form-control datepicker", style = "cursor:pointer" })
+                                        <div class="input-group-addon">
+                                            <i class="fa fa-calendar"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                                <!-- /.input group -->
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3">Gender</label>
+                                <div class="col-sm-9">
+                                    <div class="input-group col-sm-12">
+                                        @*<select id="GenderID" class="form-control">
+
+                                <option value="0">---Select Gender ---</option>
+                                @{
+
+                                    List<Gender> lstGender = (List<Gender>)ViewBag.GenderList;
+
+                                    for (int i = 0; i < lstGender.Count; i++)
+                                    {
+                                        <option value="@lstGender[i].GenderID">@lstGender[i].GenderName</option>
+                                    }
+                                }
+                            </select>*@
+
+                                        @Html.DropDownListFor(model => model.GenderID, ViewBag.GenderList as IEnumerable<SelectListItem>, new { @class = "form-control" })
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <label class="control-label col-sm-3" for="Address">Address</label>
+                                <div class="col-sm-9">
+                                    @Html.TextAreaFor(model => model.Address, new { @class = "form-control", required = "required", rows = 2 })
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-6" style="padding-left:20px;">
+                        <div class="col-lg-12">
+                            <div class="col-lg-4">
+                                <img src="~/@Url.Content(Model.FilePath)" id="patientImage" alt="Image" style="width:100px;height:100px;border:1px solid black;" />
+                            </div>
+                        </div>
+
+                        <div class="col-lg-12">
+                            <div class="form-group">
+                                <div class="col-sm-8" style="padding-top:10px;padding-left:3rem;">
+                                    @*@Html.TextBoxFor(model => model.FileName, new { type = "file", onchange = "changeImage()"})*@
+                                    <input type="file" name="Image" id="ImageFile" onchange="changeImage()" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-horizontal">
+                    <div class="col-md-12">
+                        <div class="table-responsive">
+                            <table class="table table-striped jambo_table bulk_action">
+                                <thead>
+                                    <tr class="headings">
+                                        <th class="column-title" style="text-align:center">No</th>
+                                        <th class="column-title" style="text-align:center">File Name</th>
+                                        <th class="column-title" style="text-align:center">Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="tBodyAttachFile">
+                                    @{
+                                        List<Attachments> lstAttachments = (List<Attachments>)ViewBag.AttachmentsList;
+                                        for (int i = 0; i < lstAttachments.Count; i++)
+                                        {
+                                            string btnId = "btnRemove" + lstAttachments[i].Id.ToString();
+                                            <tr>
+                                                <td style="text-align:right">@(i + 1)</td>
+                                                <td>@lstAttachments[i].FileName</td>
+                                                <td style="text-align:center;"><button type="button" id="btnDownload" class="btn btn-success btn-sm form-group" onclick="DownloadFile('@lstAttachments[i].FileCode', '@lstAttachments[i].FileName','@lstAttachments[i].FileType')"><i class="fa fa-download"></i></button></td>
+                                            </tr>
+                                        }
+                                    }
+                                </tbody>
+                                <tfoot>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+}
+

@@ -1,0 +1,227 @@
+﻿
+@{
+    ViewData["Title"] = "Import";
+    Layout = "~/Views/Shared/_MemberLayout.cshtml";
+}
+
+<link href="~/jquery-ui.css" rel="stylesheet" />
+<link href="~/jquery-ui.min.css" rel="stylesheet" />
+<script src="~/Scripts/jquery-1.10.2.js"></script>
+<script src="~/Scripts/jquery-ui.js"></script>
+<script src="~/Scripts/jquery-ui.min.js"></script>
+
+<script>
+
+    $('document').ready(function () {
+
+        $('#btnUpload').click(function () {
+
+            var files = $("#excelFile").prop("files");
+            var formData = new FormData();
+            for (var i = 0; i < files.length; i++) {
+                formData.append("files", files[i]);
+            }
+
+            $('#mdlSuccess').modal('hide');
+            $('#mdlInvalid').modal('hide');
+            $('#pSuccess').html("");
+            $('#pInvalid').html("");
+
+            $.ajax({
+                url: '@Url.Action("ImportExcel", "Patient")',
+                type: "POST",
+                dataType: "JSON",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (fnPatient) {
+            
+                    if (fnPatient.RetCode == 0) {
+                        $('#mdlInvalid').modal('show');
+                        $('#pInvalid').html(fnPatient.RetMessage);
+
+                    }
+
+                    else {
+                        var tableContent = "";
+                        $.each(fnPatient.PatientList, function (i, patient) {
+
+         
+                            tableContent += "<tr><td>" + patient.PatientCode + "</td><td style='text-align:center;'>" + patient.PatientName + "</td><td style='text-align:center;'>" + patient.GenderName + "</td><td style='text-align:center;'>" + patient.Address + "</td>";
+
+                            tableContent += "</tr>";
+
+                        });
+                        $('#tBodyPatientInfo').html(tableContent);
+                    }
+                }
+            });
+
+
+        });
+
+
+
+        $('#btnSave').click(function () {
+
+
+            $.ajax({
+                url: '@Url.Action("SaveExcelData", "Patient")',
+                type: "POST",
+                dataType: "JSON",
+                contentType: "application/json",
+                success: function (returnMessage) {
+
+                    if (returnMessage.RetCode > 0) {
+
+                        $('#mdlSuccess').modal('show');
+                        $('#pSuccess').html(returnMessage.RetMessage);
+                    }
+                    else {
+                        $('#mdlInvalid').modal('show');
+                        $('#pInvalid').html(returnMessage.RetMessage);
+                    }
+
+                }
+
+            });
+        });
+
+
+
+      $('#btnAttachFile').click(function () {
+            
+            var formData = new FormData($('form')[0]);
+
+            $.ajax({
+                url: '/Patient/UploadFile',
+                type: "POST",
+                dataType: "JSON",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (fnGoodsIssue) {
+
+                    if (fnGoodsIssue.RetCode == 0) {
+                        $('#altInvalid').show();
+                        $('#altResult').html(fnGoodsIssue.RetMessage);
+                    }
+
+                    else {
+
+                        var tableContent = "";
+                        var serNo = 1;
+
+                        $.each(fnGoodsIssue.AttachmentsList, function (i, attachment) {
+
+                            var itemLenght = $('tr[title = "StockInfo"]').length;
+                            tableContent += "<tr><td style='text-align:right'>" + serNo + "</td><td>" + attachment.FileName + "</td>";
+                            tableContent += "<td style='text-align:center'><button type='button' id=btnRemove" + attachment.Id + " onclick='RemoveAttachFile(id)' class='btn btn-danger btn-sm' >X</button></td></tr>";
+                            serNo += 1;
+
+                        });
+                        $('#tdSerNo2').html(serNo);
+                        $('#tBodyAttachFile').html(tableContent);
+
+                        $('#altInvalid').hide();
+                        $('#altResult').html("");
+                        $('#btnBrowse').val("");
+                    }
+                }
+            });
+
+        });
+    });
+
+</script>
+@{
+<div class="x_panel">
+    <div class="x_title">
+        <a href="@Url.Action("Index", "Patient")" class="btn btn-sm btn-primary"><i class="fa fa-arrow-circle-left"></i></a>
+
+        <a id="btnSave" class="btn btn-sm btn-primary"><i class="fa fa-save"></i></a>
+
+        <div class="clearfix"></div>
+    </div>
+    @*<div class="row">
+            <form class="form-horizontal">
+                <div class="table-responsive">
+                    <table class="table table-striped jambo_table bulk_action">
+                        <thead>
+                            <tr class="headings">
+                                <th class="column-title" style="text-align:center">No</th>
+                                <th class="column-title" style="text-align:center">File Name</th>
+                                <th class="column-title" style="text-align:center">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tBodyAttachFile"></tbody>
+                        <tfoot>
+                            <tr>
+                                <td style="text-align:right;vertical-align:middle" id="tdSerNo2">1</td>
+                                <td style="text-align:center;vertical-align:middle">@Html.TextBox("attachFile", "", new { type = "file", @class = "btn btn-default btn-file btn-sm", @id = "btnBrowse", style = "text-align:left" })</td>
+                                <td style="text-align:center;vertical-align:middle"><button class="btn btn-success" type="button" id="btnAttachFile"><i class="fa fa-upload"></i></button></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+            </form>
+        </div>*@
+    <div class="x_content">
+        <form class="form-horizontal form-label-left" novalidate method="post">
+            <p>Excel File : </p>
+            <input type="file" name="excelfile" id="excelFile" />
+            <div style="margin-top:10px;"><button type="button" id="btnUpload" class="btn btn-sm btn-primary">Upload</button></div>
+            <div class="table-responsive">
+                <table class="table table-striped jambo_table bulk_action dataTables" id="example">
+                    <thead>
+                        <tr class="headings">
+                            <th class="column-title" style="text-align:center">Code</th>
+                            <th class="column-title" style="text-align:center">Patient Name</th>
+                            <th class="column-title" style="text-align:center">Gender</th>
+                            <th class="column-title" style="text-align:center">Address</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tBodyPatientInfo"></tbody>
+                </table>
+            </div>
+        </form>
+    </div>
+</div>
+
+    <div id="mdlSuccess" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog modal-sm" style="background-color: #DFF0D8">
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Success!</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="pSuccess"></p><b id="bSuccessCode"></b>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="btnSuccessOk">Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="mdlInvalid" class="modal fade" role="dialog" data-backdrop="false">
+        <div class="modal-dialog modal-sm">
+            <!-- Modal content-->
+            <div class="modal-content" style="background-color:#FCF8E3">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Invalid!</h4>
+                </div>
+                <div class="modal-body">
+                    <p id="pInvalid"></p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal" id="btnInvalidOk">Ok</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+}
