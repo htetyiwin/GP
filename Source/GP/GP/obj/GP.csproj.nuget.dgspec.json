@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "D:\\Test\\GP\\GP\\GP.csproj": {}
+    "D:\\Git\\GP\\Source\\GP\\GP\\GP.csproj": {}
   },
   "projects": {
-    "D:\\Test\\GP\\GP\\GP.csproj": {
+    "D:\\Git\\GP\\Source\\GP\\GP\\GP.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "D:\\Test\\GP\\GP\\GP.csproj",
+        "projectUniqueName": "D:\\Git\\GP\\Source\\GP\\GP\\GP.csproj",
         "projectName": "GP",
-        "projectPath": "D:\\Test\\GP\\GP\\GP.csproj",
+        "projectPath": "D:\\Git\\GP\\Source\\GP\\GP\\GP.csproj",
         "packagesPath": "C:\\Users\\PME\\.nuget\\packages\\",
-        "outputPath": "D:\\Test\\GP\\GP\\obj\\",
+        "outputPath": "D:\\Git\\GP\\Source\\GP\\GP\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
@@ -81,7 +81,7 @@
           ],
           "assetTargetFallback": true,
           "warn": true,
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.100\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.301\\RuntimeIdentifierGraph.json"
         }
       }
     }
