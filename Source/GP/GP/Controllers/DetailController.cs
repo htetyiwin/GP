@@ -12,5 +12,9 @@ namespace GP.Controllers
         {
             return View();
         }
+        public IActionResult Detail()
+        {
+            return View();
+        }
     }
 }

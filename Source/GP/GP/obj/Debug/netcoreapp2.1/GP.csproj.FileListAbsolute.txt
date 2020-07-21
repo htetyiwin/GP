@@ -115,3 +115,4 @@ D:\Git\GP\Source\GP\GP\obj\Debug\netcoreapp2.1\GP.dll
 D:\Git\GP\Source\GP\GP\obj\Debug\netcoreapp2.1\GP.pdb
 D:\Git\GP\Source\GP\GP\obj\Debug\netcoreapp2.1\GP.genruntimeconfig.cache
 D:\Git\GP\Source\GP\GP\obj\Debug\netcoreapp2.1\GP.csproj.CopyComplete
+D:\Git\GP\Source\GP\GP\obj\Debug\netcoreapp2.1\Razor\Views\Detail\Index.cshtml.g.cs
