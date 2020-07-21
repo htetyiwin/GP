@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GP.Controllers
 {
-    public class DetailController1 : Controller
+    public class DetailController : Controller
     {
         public IActionResult Index()
         {
